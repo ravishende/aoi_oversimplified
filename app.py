@@ -1,0 +1,25 @@
+import chainlit as cl
+
+from agent import run_agent
+
+
+@cl.set_starters
+async def set_starters():
+    """Show starter cards on the welcome screen."""
+    return [
+        cl.Starter(
+            label="Recommend a model...",
+            message="Recommend a model for image classification on the Iris dataset at https://archive.ics.uci.edu/dataset/53/iris",
+            icon="/public/icon-model.svg",
+        ),
+        cl.Starter(
+            label="Search NDP catalog...",
+            message="Search for climate datasets in the NDP catalog",
+            icon="/public/icon-search.svg",
+        ),
+    ]
+
+@cl.on_message
+async def main(message: cl.Message):
+    result = run_agent(message.content)
+    await cl.Message(content=result).send()

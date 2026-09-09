@@ -1,0 +1,4 @@
+default:
+  model: gpt-oss
+  api_key: ${NRP_LLM_API_KEY}
+  base_url: https://ellm.nrp-nautilus.io/v1
