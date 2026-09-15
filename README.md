@@ -38,3 +38,6 @@ pip install -e .
 
 # Running
 `chainlit run app.py`
+
+Example prompt:
+"Recommend a model for tabular classification on the Iris dataset at ./data/iris"
