@@ -12,8 +12,15 @@ For example:
 
 # Setup
 
+1. Clone the repo
+`git clone https://github.com/ravishende/aoi_oversimplified.git`
+
+2. create a .env file 
 `cp .env.example .env`
-Then Fill in NRP LLM API key
+
+3. Open the .env file and fill in NRP_LLM_API_KEY with your API key.
+
+4. Install required packages (instructions below) 
 
 ## MacOS
 ```
@@ -28,3 +35,6 @@ py -m venv venv
 venv\Scripts\Activate.ps1
 pip install -e .
 ```
+
+# Running
+`chainlit run app.py`
