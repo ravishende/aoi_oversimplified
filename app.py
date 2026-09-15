@@ -9,7 +9,7 @@ async def set_starters():
     return [
         cl.Starter(
             label="Recommend a model...",
-            message="Recommend a model for image classification on the Iris dataset at https://archive.ics.uci.edu/dataset/53/iris",
+            message="Recommend a model for tabular classification on the Iris dataset at ./data/iris",
             icon="/public/icon-model.svg",
         ),
         cl.Starter(
@@ -21,5 +21,5 @@ async def set_starters():
 
 @cl.on_message
 async def main(message: cl.Message):
-    result = run_agent(message.content)
+    result = await cl.make_async(run_agent)(message.content)
     await cl.Message(content=result).send()

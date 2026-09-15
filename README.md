@@ -1,6 +1,15 @@
 An oversimplified recreation of AoI
 - Real version is hosted at https://aoi.nrp-nautilus.io/thread/98f07048-2589-4015-8860-83a14cc413fd
 
+There are several differences between this demo and AoI, but the main steps are similar and outlined in graph.py. 
+This demo relies on LLM calls slightly more frequently than AoI because the amount of code for some of those deterministic steps is too large and would bloat the limited code that is meant for understanding the process.
+
+Because this is an oversimplified demo, certain behaviors are different.
+For example:
+ 1. The analyze_dataset step only works for the "Iris" dataset or image classification datasets
+    - it returns "tabular_classification" for Iris and "image_classification" for everything else.
+ 2. There are no baseline models injected, so any recommendations are only based on recent papers, rather than including common classical models (e.g. RandomForest) 
+
 # Setup
 
 `cp .env.example .env`

@@ -3,8 +3,8 @@ import requests
 from langchain_core.tools import tool
 from graph import run_recommendation_graph
 
-@tool
-def recommend_model(user_query: str, dataset_path: str) -> dict[str, Any]:
+@tool(return_direct=True)
+def recommend_model(user_query: str, dataset_path: str) -> str:
     """Research and recommend ML models for a user's task.
 
     Args:
@@ -20,11 +20,7 @@ def recommend_model(user_query: str, dataset_path: str) -> dict[str, Any]:
         dataset_path=dataset_path,
     )
 
-    return {
-        "task": state["normalized_task"],
-        "recommendations": state["recommendations"],
-        "models": state["verified_models"],
-    }
+    return state["recommendations"]
 
 @tool
 def search_ndp_catalog(query: str, max_results:int = 10) -> dict[str, Any]:

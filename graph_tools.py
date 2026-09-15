@@ -1,5 +1,7 @@
 # pylint: disable=typecheck
 from __future__ import annotations
+from copy import deepcopy
+from huggingface_hub import HfApi
 from langchain_core.tools import tool
 import requests
 
@@ -84,6 +86,83 @@ def search_papers(
         print(f"OpenAlex search error: {e}")
         return []
 
+@tool
+def verify_models(models: list[dict]) -> list[dict]:
+    """
+    Find the best Hugging Face match for each extracted ML model.
+
+    Preserves the original model dictionary and adds:
+      - hf_link
+      - hf_downloads
+      - hf_likes
+    """
+
+    api = HfApi()
+    verified_models = []
+
+    for model in models:
+        result = deepcopy(model)
+
+        model_name = str(model.get("model", "")).strip()
+
+        # Defaults when no HF match is found.
+        result["hf_link"] = None
+        result["hf_downloads"] = 0
+        result["hf_likes"] = 0
+
+        if not model_name:
+            verified_models.append(result)
+            continue
+
+        try:
+            print(f"Checking Hugging Face for: {model_name}")
+
+            matches = list(
+                api.list_models(
+                    search=model_name,
+                    sort="downloads",
+                    limit=1,
+                )
+            )
+
+            if matches:
+                match = matches[0]
+
+                result["hf_link"] = (
+                    f"https://huggingface.co/{match.id}"
+                )
+                result["hf_downloads"] = (
+                    getattr(match, "downloads", 0) or 0
+                )
+                result["hf_likes"] = (
+                    getattr(match, "likes", 0) or 0
+                )
+
+        except Exception as e:
+            # Keep the model and its paper information even if
+            # Hugging Face lookup fails.
+            print(
+                f"Hugging Face lookup failed for "
+                f"{model_name}: {e}"
+            )
+
+        verified_models.append(result)
+
+    # Put models with stronger HF presence first, while retaining
+    # paper citations as a secondary signal.
+    verified_models.sort(
+        key=lambda m: (
+            m.get("hf_link") is not None,
+            m.get("hf_downloads", 0),
+            m.get("paper_citations", 0),
+        ),
+        reverse=True,
+    )
+
+    return verified_models
+
 TOOLS = [
-    search_papers
+    search_papers,
+    analyze_dataset,
+    verify_models
 ]
